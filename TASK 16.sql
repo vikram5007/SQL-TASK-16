@@ -10,7 +10,7 @@ name varchar(20)
 alter trigger dml_off on students
 for delete
 as begin
-if datepart(hh,getdate())=11  15
+if datepart(hh,getdate())=between 11 and 15
 begin print ' ACCESS IS BLOCKED IN THIS TIME ZONE'
 ROLLBACK TRAN
 END
@@ -72,5 +72,23 @@ end
 
 
 drop table staff
+
+
+
+
+----------------- ALL DDL TRIGGERS IN ONE TRIGGER ------------------------
+
+ALTER trigger ddl_commands on database
+for CREATE_TABLE,ALTER_TABLE,DROP_TABLE,RENAME
+as begin
+if EVENTDATA().value('(/EVENT_INSTANCE/EventType)[1]', 'nvarchar(250)')='CREATE_TABLE'
+print 'TABLE CREATED SUCCESSFULLY ! '
+ELSE IF EVENTDATA().value('(/EVENT_INSTANCE/EventType)[1]', 'nvarchar(250)')='ALTER_TABLE'
+print 'TABLE ALTERED SUCCESSFULLY ! '
+ELSE IF  EVENTDATA().value('(/EVENT_INSTANCE/EventType)[1]', 'nvarchar(250)')='DROP_TABLE'
+PRINT 'TABLE DROPPED !! '
+ELSE IF  EVENTDATA().value('(/EVENT_INSTANCE/EventType)[1]', 'nvarchar(250)')='RENAME'
+PRINT 'TABLE HAS BEEN RENAMED '
+end
 
 -------------------------------------- END ----------------------------------------
